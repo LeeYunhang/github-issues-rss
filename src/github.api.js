@@ -10,12 +10,12 @@
 
 const got = require('got');
 
+const logger = require('./logger')
 const { GITHUB_API, CLIENT_ID, CLIENT_SECRET } = require('./constant')
 
 
 exports.generateIssuesApi = 
 function generateIssuesApi(username, reposName) {
-  console.log(CLIENT_ID)
   return `${GITHUB_API}/repos/${username}/${reposName}/issues?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&per_page=100`
 }
 
@@ -26,6 +26,7 @@ function generateIssuesApi(username, reposName) {
 exports.getRepoIssues = async function getRepoIssues(url) {
   try {
     let res = await got(url)
+    logger.debug('api request count remaining: ' + res.headers['x-ratelimit-remaining'])
     let body = res.body
     let data = JSON.parse(body)
     // console.dir(res)
@@ -37,5 +38,7 @@ exports.getRepoIssues = async function getRepoIssues(url) {
       date: issue.created_at,
       guid: issue.updated_at
     }))
-  } catch(e) { }
+  } catch(e) {
+    logger.error(e)
+  }
 }

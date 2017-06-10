@@ -7,6 +7,8 @@
 
 const fs = require('fs')
 
+const { CLIENT_ID, CLIENT_SECRET } = require('./constant')
+
 /**
  * @param {string} url
  * @return {User} - user name, repo's name
@@ -35,7 +37,7 @@ function extractInfoFromUrl(url) {
 exports.getApiUrl = function getApiUrl(url) {
   const { username, reposName } = extractInfoFromUrl(url)
   
-  return `https://api.github.com/repos/${username}/${reposName}/issues`
+  return `https://api.github.com/repos/${username}/${reposName}/issues?client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}&per_page=100`
 }
 
 /**
