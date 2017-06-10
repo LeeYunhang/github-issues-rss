@@ -24,6 +24,7 @@ app.use(async (ctx) => {
       case 2:
         ctx.type = 'application/xml'
         ctx.body = await generateRss(args[0])
+        logger.info(path)          
         break
       case 1:
         if (args[0] === 'index' || args[0] === 'index.htm' || args[0] === 'index.html') {
