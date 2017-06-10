@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[dylang]]></title><description><![CDATA[dylang/node-rss's issue]]></description><link>https://github.com/dylang/node-rss/issues</link><generator>RSS for Node</generator><lastBuildDate>Thu, 11 May 2017 07:46:13 GMT</lastBuildDate><atom:link href="https://rss.mrcodex.com/https%3A%2F%2Fgithub.com%2Fdylang%2Fnode-rss%2Fissues/feed" rel="self" type="application/rss+xml"/><item><title><![CDATA[Remove any script tags from generated feed xml]]></title><description><![CDATA[<p>Hey! 👋</p>
+<p>In my opinion <code>node-rss</code> should remove all script (e.g. iframe) tags from a generated feed, because some rss validators show the following warnings/recommendations:</p>
+<p><code>content:encoded should not contain iframe tag</code>
+<code>description should not contain iframe tag</code></p>
+<p>These warnings occur if you add <code>custom_elements</code> like</p>
+<pre><code>item.custom_elements.push({
+  &#39;content:encoded&#39;: {
+    _cdata: &quot;&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;...&quot; frameborder=&quot;0&quot; allowfullscreen&gt;&lt;/iframe&gt;&quot;
+  }
+});
+</code></pre><p>Refs <a href="https://validator.w3.org/feed/docs/warning/SecurityRisk.html">https://validator.w3.org/feed/docs/warning/SecurityRisk.html</a></p>
+<p>As this is a rule, it might be helpful for everybody. Let me know if you think that the caller should remove script tags by himself.</p>
+]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[kirrg001]]></dc:creator><pubDate>Tue, 09 May 2017 14:06:32 GMT</pubDate></item><item><title><![CDATA[Allow user to specify type attr in atom:link]]></title><description><![CDATA[<p>Technically, &#39;application/rss+xml&#39; isn&#39;t a valid media type (<a href="https://www.iana.org/assignments/media-types/media-types.xhtml">https://www.iana.org/assignments/media-types/media-types.xhtml</a>).  This could cause problems in some browsers or RSS readers.  While leaving it as the default, allow users to specify a type in feedOptions.</p>
+]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[harpojaeger]]></dc:creator><pubDate>Fri, 17 Feb 2017 20:48:47 GMT</pubDate></item><item><title><![CDATA[feed.item errors when passed directly to Array.prototype.forEach]]></title><description><![CDATA[<p>I have a static site generator which, shockingly, is using node-rss to output RSS feeds.</p>
+<p>This code runs successfully:</p>
+<pre><code class="lang-js">file.data.posts.map(function(post) {
+    return {
+        title: post.title,
+        url: urlPrefix + file.relative,
+        categories: post.categories,
+        // TODO: normalize URLs to absolute URLs
+        // See the `rss` docs for details
+        description: post.contents,
+        date: new Date(post.time.epoch * 1000)
+    };
+}).forEach(function(item) {
+    feed.item(item);
+});
+</code></pre>
+<p>As I&#39;m sure you&#39;ve guessed, <code>file.data.posts</code> is an array of posts. All that this does is map each post in to a node-rss-compatible item object and then call <code>.item()</code> on each object.</p>
+<p>This code is theoretically functionally equivalent:</p>
+<pre><code class="lang-js">file.data.posts.map(function(post) {
+    return {
+        title: post.title,
+        url: urlPrefix + file.relative,
+        categories: post.categories,
+        // TODO: normalize URLs to absolute URLs
+        // See the `rss` docs for details
+        description: post.contents,
+        date: new Date(post.time.epoch * 1000)
+    };
+}).forEach(feed.item);
+</code></pre>
+<p>but it fails with <code>TypeError: Cannot read property &#39;items&#39; of undefined</code>. Note that <code>feed.item</code> is being passed directly into <code>forEach</code> - presumably this is mangling <code>this</code> somehow, causing the error.</p>
+<p>Here&#39;s the full stack trace:</p>
+<pre><code>/Users/alex/Development/github/strugee.github.com/node_modules/rss/lib/index.js:179
+        this.items.push(item);
+            ^
+
+TypeError: Cannot read property &#39;items&#39; of undefined
+    at RSS.item (/Users/alex/Development/github/strugee.github.com/node_modules/rss/lib/index.js:179:13)
+    at Array.forEach (native)
+    at DestroyableTransform._transform (/Users/alex/Development/github/strugee.github.com/node_modules/stratic-indexes-to-rss/index.js:62:6)
+    at DestroyableTransform.Transform._read (/Users/alex/Development/github/strugee.github.com/node_modules/readable-stream/lib/_stream_transform.js:159:10)
+    at DestroyableTransform.Transform._write (/Users/alex/Development/github/strugee.github.com/node_modules/readable-stream/lib/_stream_transform.js:147:83)
+    at doWrite (/Users/alex/Development/github/strugee.github.com/node_modules/readable-stream/lib/_stream_writable.js:313:64)
+    at writeOrBuffer (/Users/alex/Development/github/strugee.github.com/node_modules/readable-stream/lib/_stream_writable.js:302:5)
+    at DestroyableTransform.Writable.write (/Users/alex/Development/github/strugee.github.com/node_modules/readable-stream/lib/_stream_writable.js:241:11)
+    at DestroyableTransform.ondata (/Users/alex/Development/github/strugee.github.com/node_modules/readable-stream/lib/_stream_readable.js:531:20)
+    at emitOne (events.js:96:13)
+</code></pre><p>I&#39;m on Node.js@4.4, node-rss@1.2.1.</p>
+]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[strugee]]></dc:creator><pubDate>Tue, 10 Jan 2017 19:11:43 GMT</pubDate></item><item><title><![CDATA[Ability to add a stylesheet]]></title><description><![CDATA[<p><a href="https://www.petefreitag.com/item/208.cfm">https://www.petefreitag.com/item/208.cfm</a></p>
+<pre><code>&lt;?xml version=&quot;1.0&quot; ?&gt;
+&lt;?xml-stylesheet type=&quot;text/css&quot; href=&quot;http://you.com/rss.css&quot; ?&gt;
+...
+</code></pre>]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[lolmaus]]></dc:creator><pubDate>Tue, 27 Dec 2016 01:14:17 GMT</pubDate></item><item><title><![CDATA[Pass custom attributes to enclosure]]></title><description><![CDATA[<p>I needed to generate rss feed for my Objective-C application which is using Sparkle for updates. Here is link showing enclosure with custom attributes: <a href="https://sparkle-project.org/documentation/publishing/#publishing-an-update">https://sparkle-project.org/documentation/publishing/#publishing-an-update</a></p>
+]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[8alery]]></dc:creator><pubDate>Mon, 12 Sep 2016 11:11:17 GMT</pubDate></item><item><title><![CDATA[[JP] custom timezone and date format]]></title><description><![CDATA[<p>Hi, for a particular client in Japan, they require the date in JST timezone.  I created this PR to support that.  I included a new test and ensured all other tests pass.</p>
+]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[jaypackard]]></dc:creator><pubDate>Fri, 09 Sep 2016 20:46:41 GMT</pubDate></item><item><title><![CDATA[use xml stream feature]]></title><description><![CDATA[<p>I needed to send data from my db to Google Merchant Center. So I used you lib to transform my JSON to rxx format but I needed to stream it because of the data quantity. So as node-xml allows to stream the conversion, I added this.</p>
+]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[ty000]]></dc:creator><pubDate>Thu, 28 Apr 2016 14:38:00 GMT</pubDate></item><item><title><![CDATA[exclude empty length/type values from enclosures]]></title><description><![CDATA[<p>For #51. If you can&#39;t figure out the enclosure&#39;s size or type, just leave the attribute out and let the client figure it out. Though according to the <a href="http://www.rssboard.org/rss-specification#ltenclosuregtSubelementOfLtitemgt">spec</a>, these attributes are required.</p>
+]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[endquote]]></dc:creator><pubDate>Sat, 12 Mar 2016 11:42:01 GMT</pubDate></item><item><title><![CDATA[Dont auto generate last build date]]></title><description><![CDATA[<p>I&#39;m not sure whether this is useful for others. In our case we were checking E-Tag header to figure out any feed change. Because this lastBuildDate is auto generated, the E-Tag was always changing though no feed item got changed.</p>
+]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[msathis]]></dc:creator><pubDate>Wed, 23 Sep 2015 09:21:56 GMT</pubDate></item><item><title><![CDATA[Enclosure item fails to recognize `type` of the enclosure ]]></title><description><![CDATA[<p>I am parsing images from facebook and there are some image URLs like this:</p>
+<p><a href="https://scontent.xx.fbcdn.net/hphotos-xfp1/v/t1.0-9/s720x720/11665637_10153092749860369_5867235404683714794_n.jpg?oh=185130d3b64dca7853682ce21a9c0893&amp;oe=562DBCC0">https://scontent.xx.fbcdn.net/hphotos-xfp1/v/t1.0-9/s720x720/11665637_10153092749860369_5867235404683714794_n.jpg?oh=185130d3b64dca7853682ce21a9c0893&amp;oe=562DBCC0</a></p>
+<p>The <code>type</code> returned for this link is <code>false</code>. I saw that that type recognition in your lib is done via mime.lookup. Can you add ability to force specify enclosure type?</p>
+]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[deathmood]]></dc:creator><pubDate>Sat, 04 Jul 2015 13:27:22 GMT</pubDate></item><item><title><![CDATA[Strings are not conforming to the RSS spec for valid chars.]]></title><description><![CDATA[<p>The <a href="http://www.w3.org/TR/REC-xml/#charsets">RSS spec</a> specifies exactly which characters are considered valid in RSS:</p>
+<p><code>#x9 | #xA | #xD | [#x20-#xD7FF] | [#xE000-#xFFFD] | [#x10000-#x10FFFF]</code></p>
+<p>At present, this library doesn&#39;t handle ensuring that the strings it outputs conform to the spec. This means that the RSS feeds that are generated can easily become broken. We&#39;re having this problem in Ghost, when users copy &amp; paste data from elsewhere - things like form feed and other control characters are completely invisible, but cause the RSS feed to become invalid &amp; unusable.</p>
+<p>There is some interesting information around about fixing this sort of problem:</p>
+<p><a href="http://stackoverflow.com/questions/397250/unicode-regex-invalid-xml-characters">http://stackoverflow.com/questions/397250/unicode-regex-invalid-xml-characters</a>
+<a href="http://stackoverflow.com/questions/2670037/how-to-remove-invalid-utf-8-characters-from-a-javascript-string">http://stackoverflow.com/questions/2670037/how-to-remove-invalid-utf-8-characters-from-a-javascript-string</a></p>
+<p>And here&#39;s an example regex that I have been trying out for fixing the issue:</p>
+<p><code>/(?![\u0009\u000a\u000d\u0020-\uD7FF\uE000-\uFFFD])./g</code></p>
+<p>Here it is in action:</p>
+<p><a href="https://regex101.com/r/pQ7aB6/1">https://regex101.com/r/pQ7aB6/1</a></p>
+<p>I have a branch with this implemented in Ghost, and it seems to work ok: <a href="https://github.com/ErisDS/Ghost/commit/7acb3f9df3e7f2cec54eae8173de6a3947bfaaf8">https://github.com/ErisDS/Ghost/commit/7acb3f9df3e7f2cec54eae8173de6a3947bfaaf8</a></p>
+<p>This seems to work well, the only question is whether the regex is a bit too naive / slow / memory intensive for use in a library like node-rss? </p>
+<p>I&#39;d be happy to PR a fix to node-rss, but interested to get some feedback on the regex and whether a different approach might be better.</p>
+]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[ErisDS]]></dc:creator><pubDate>Thu, 21 May 2015 12:22:50 GMT</pubDate></item><item><title><![CDATA[Enclosure Item looks for "size" and not length.]]></title><description><![CDATA[<p>If I do a passthrough of this RSS enclosure element:</p>
+<pre><code class="lang-xml">&lt;enclosure url=&quot;http://example.com/file.mp3&quot; length=&quot;5242880&quot; type=&quot;audio/mpeg&quot;/&gt;
+</code></pre>
+<p>using this code:</p>
+<pre><code class="lang-js">    if (item.enclosures &amp;&amp; Array.isArray(item.enclosures)){
+        item.enclosures.forEach(function(enclosure){
+            if (enclosure.type === &#39;audio/mpeg&#39;) {
+                itemOptions.enclosure = enclosure;
+            }
+         }
+    }
+</code></pre>
+<p>I get </p>
+<pre><code class="lang-xml">&lt;enclosure url=&quot;http://example.com/file.mp3&quot; length=&quot;0&quot; type=&quot;audio/mpeg&quot;/&gt;
+</code></pre>
+<p>&quot;size&quot; isn&#39;t the normal field name: <a href="https://en.wikipedia.org/wiki/RSS_enclosure">https://en.wikipedia.org/wiki/RSS_enclosure</a></p>
+]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[rv-kip]]></dc:creator><pubDate>Sat, 31 Jan 2015 01:37:49 GMT</pubDate></item><item><title><![CDATA[added camelCase for #40]]></title><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[coleGillespie]]></dc:creator><pubDate>Fri, 09 Jan 2015 18:24:24 GMT</pubDate></item><item><title><![CDATA[camel casing]]></title><description><![CDATA[<p>some have _ some are camel. some of the main attributes are camel case, some are not. can we switch all to camel for cleanliness and sanity?</p>
+<pre><code>lib/posts.js
+  251:4   error  Identifier &#39;feed_url&#39; is not in camel case  camelcase
+  252:4   error  Identifier &#39;site_url&#39; is not in camel case  camelcase
+</code></pre>]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[coleGillespie]]></dc:creator><pubDate>Fri, 09 Jan 2015 17:58:24 GMT</pubDate></item><item><title><![CDATA[CDATA filtering options, new item addition functions, unit tests, bug fixes]]></title><description><![CDATA[<ul>
+<li>Optional disabling of CDATA wrapping by field name</li>
+<li>Adding items by concatenation of existing items or by complete replacement of existing items</li>
+<li>Associated unit tests</li>
+<li>Runnable example code <code>examples/simple.js</code></li>
+<li>Corresponding readme updates.</li>
+</ul>
+<p>This PR supercedes #37, which has some relevant discussion. 
+This PR is similar to existing PR #28, but allows for finer control over what fields can be skipped for CDATA wrapping.</p>
+]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[rv-kip]]></dc:creator><pubDate>Sat, 20 Dec 2014 01:50:58 GMT</pubDate></item><item><title><![CDATA[Add item content]]></title><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[efuquen]]></dc:creator><pubDate>Thu, 20 Nov 2014 18:55:47 GMT</pubDate></item><item><title><![CDATA[Author element on channel fails validation]]></title><description><![CDATA[<p>In the example code in the Readme.md, you show an author element on the &quot;feed&quot; which generates an author sub-element on channel.  </p>
+<p>If you set the author property on the feed, but not when generating items (optional), it outputs an author element on channel in addition to the generator element on channel and is missing from the item. If you then try to validate that feed with an online tool, it complains about the author element on channel.</p>
+<p><a href="http://feedvalidator.org">http://feedvalidator.org</a>
+<a href="http://www.rssboard.org/rss-specification#requiredChannelElements">http://www.rssboard.org/rss-specification#requiredChannelElements</a></p>
+]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[instanceof]]></dc:creator><pubDate>Mon, 28 Jul 2014 18:48:27 GMT</pubDate></item><item><title><![CDATA[No CDATA]]></title><description><![CDATA[<p>Is it possible to create XML without a CDATA?</p>
+]]></description><link>https://github.com/dylang/node-rss/issues</link><guid isPermaLink="true">https://github.com/dylang/node-rss/issues</guid><dc:creator><![CDATA[tmshv]]></dc:creator><pubDate>Sun, 09 Feb 2014 14:20:28 GMT</pubDate></item></channel></rss>

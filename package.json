@@ -1,0 +1,20 @@
+{
+  "name": "github-issues-rss",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/mrcodehang/github-issues-rss.git",
+  "author": "mrcode <734202639@qq.com>",
+  "license": "GNU",
+  "dependencies": {
+    "got": "^6.7.1",
+    "koa": "latest",
+    "marked": "^0.3.6",
+    "mocha": "^3.3.0",
+    "mysql": "^2.13.0",
+    "rss": "^1.2.2",
+    "winston": "^2.3.1"
+  },
+  "scripts": {
+    "test": "mocha ${1}"
+  }
+}
