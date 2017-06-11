@@ -38,7 +38,7 @@ pool.getConnection = new Proxy(pool.getConnection, {
  */
  async function getRssByUrl(url) {
   try {
-    let connection = await pool.getConnection()
+    var connection = await pool.getConnection()
     let { results } = await connection.query(`SELECT url, content, date FROM ${TABLE_NAME} WHERE url=${mysql.escape(url)}`)
 
     if (results.length) {
@@ -52,6 +52,7 @@ pool.getConnection = new Proxy(pool.getConnection, {
   } catch (e) {
     logger.error(e)
   } finally {
+    logger.debug('release connection, the type of connection is ' + typeof connection)
     typeof connection !== 'undefined' && connection.release()
   }
 }
@@ -63,7 +64,7 @@ pool.getConnection = new Proxy(pool.getConnection, {
  */
 async function setRss(url, content) {
   try {
-    let connection = await pool.getConnection()
+    var connection = await pool.getConnection()
     
     if (await getRssByUrl(url)) { 
       await connection.query(`UPDATE ${TABLE_NAME} SET content=?, date=? WHERE url=?`, [
@@ -86,7 +87,7 @@ async function setRss(url, content) {
 
 async function clearExpiredRss() {
   try {
-    let connection = await pool.getConnection()
+    var connection = await pool.getConnection()
     connection.query(`DELETE FROM ${TABLE_NAME} WHERE date+3600*1000 < ${Date.now()}`)
   } catch (e) {
     logger.error(e)

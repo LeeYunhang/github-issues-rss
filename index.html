@@ -172,6 +172,13 @@
       }
       var encodedUrl = encodeURIComponent(url);
       location.href = 'https://rss.mrcodex.com/' + encodedUrl + '/feed';
+    } else if (/^https:\/\/github\.com\/([\w\-]+)\/([\w\-]+)\/?$/.test(url)) {
+      if (url.lastIndexOf('/') === url.length - 1) {
+        url = url.substring(0, url.length - 1);
+      }
+
+      var encodedUrl = encodeURIComponent(url + '/issues')
+      location.href = 'https://rss.mrcodex.com/' + encodedUrl + '/feed';
     } else {
       alert('Please enter a valid url');
     }
