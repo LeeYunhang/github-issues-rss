@@ -8,6 +8,7 @@
   "dependencies": {
     "got": "^6.7.1",
     "koa": "latest",
+    "koa-favicon": "^2.0.0",
     "marked": "^0.3.6",
     "mocha": "^3.3.0",
     "mysql": "^2.13.0",

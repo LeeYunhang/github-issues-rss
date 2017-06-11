@@ -1,4 +1,6 @@
-  const Koa = require('koa')
+const Koa = require('koa')
+const favicon = require('koa-favicon')
+const path = require('path')
 
 const CONST = require('./constant')
 const { generateRss } = require('./rss')
@@ -8,47 +10,48 @@ const logger = require('./logger')
 const { URL_GREP } = CONST
 const app = new Koa()
 
-app.use(async (ctx) => {
-  const path = ctx.request.path
-  const args = path.split('/').filter(a => a)
-        .map((a, i) => i? a : decodeURIComponent(a))
+app.use(favicon(path.resolve(__dirname, '../favicon.ico')))
 
-  if (args.length && !URL_GREP.test(args[0])) {
-    logger.error(path)
-    ctx.body = await readFile('./404.html')
-    ctx.status = 404
-    ctx.type = 'text/html'
+// acesss log
+app.use(async(ctx, next) => {
+  logger.info(ctx.request.path)
+  await next()
+})
+
+app.use(async(ctx, next) => {
+  const path = ctx.request.path
+  const args = path.split('/').filter(i => i)
+
+  ctx.state.args = args
+  if (!args.length || (args.length === 1 && /^index(\.html?)?$/i.test(args[0]))) {
+    ctx.body = await readFile('./index.html')
+    ctx.status = 200
   } else {
-    logger.debug(`url args count is ${args.length}`)
-    switch(args.length) {
-      case 2:
-        ctx.type = 'application/xml'
-        ctx.body = await generateRss(args[0])
-        logger.info(path)          
-        break
-      case 1:
-        if (args[0] === 'index' || args[0] === 'index.htm' || args[0] === 'index.html') {
-          ctx.body = await readFile('./index.html')
-          ctx.type = 'text/html'
-          ctx.status = 200
-          logger.info(path)          
-        } else {
-          ctx.redirect(args[0])
-        }
-        break
-      default:
-        if (!args.length) {
-          ctx.body = await readFile('./index.html')
-          ctx.status = 200
-          ctx.type = 'text/html'
-          logger.info(path)
-        } else {
-          ctx.body = await readFile('./404.html')
-          ctx.type = 'text/html'
-          ctx.status = 404
-        }
+    await next()
+  }
+})
+
+app.use(async(ctx, next) => {
+  const args = ctx.state.args
+
+  if (args.length) {
+    const decodedUrl = decodeURIComponent(args[0])
+    const isValid = URL_GREP.test(decodedUrl)
+
+    if (args.length === 1 && isValid) {
+      ctx.redirect(decodedUrl)
+    } else if (args.length === 2 && isValid && args[1] === 'feed') {
+      ctx.type = 'application/xml'
+      ctx.body = await generateRss(args[0])
     }
   }
+
+  await next()
+})
+
+app.use(async(ctx, next) => {
+  ctx.body = await readFile('./404.html')
+  ctx.status = 404
 })
 
 app.listen(3000)
