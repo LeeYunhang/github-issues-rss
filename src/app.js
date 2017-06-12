@@ -42,7 +42,7 @@ app.use(async(ctx, next) => {
       ctx.redirect(decodedUrl)
     } else if (args.length === 2 && isValid && args[1] === 'feed') {
       ctx.type = 'application/xml'
-      ctx.body = await generateRss(args[0])
+      ctx.body = await generateRss(decodedUrl)
     }
   }
 
