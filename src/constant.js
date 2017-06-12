@@ -4,7 +4,7 @@ const process = require('process')
  * @constant
  * @readonly
  */
-exports.URL_GREP = /^https:\/\/github\.com\/([\w\-]+)\/([\w\-]+)\/issues\/?$/
+exports.URL_GREP = /^https:\/\/github\.com\/([\w\-]+)\/([\w\-\.]+)\/issues\/?$/
 
 exports.CLIENT_ID = process.env.CLIENT_ID
 exports.CLIENT_SECRET = process.env.CLIENT_SECRET

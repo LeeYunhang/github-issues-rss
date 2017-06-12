@@ -38,11 +38,17 @@ app.use(async(ctx, next) => {
     const decodedUrl = decodeURIComponent(args[0])
     const isValid = URL_GREP.test(decodedUrl)
 
+    logger.debug('decodeUrl=' + decodedUrl)
+    logger.debug('args.length=' + args.length)
+    logger.debug('isValid=' + isValid)
     if (args.length === 1 && isValid) {
+      logger.debug('redirect to:' + decodedUrl)
       ctx.redirect(decodedUrl)
+      return
     } else if (args.length === 2 && isValid && args[1] === 'feed') {
       ctx.type = 'application/xml'
       ctx.body = await generateRss(decodedUrl)
+      return
     }
   }
 

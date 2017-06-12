@@ -175,13 +175,13 @@
 
   rssButton.addEventListener('click', function(e) {
     var url = url_input.value;
-    if (/^https:\/\/github\.com\/([\w\-]+)\/([\w\-]+)\/issues\/?$/.test(url)) {
+    if (/^https:\/\/github\.com\/([\w\-]+)\/([\w\-\.]+)\/issues\/?$/.test(url)) {
       if (url.lastIndexOf('/') === url.length - 1) {
         url = url.substring(0, url.length - 1);
       }
       var encodedUrl = encodeURIComponent(url);
       location.href = 'https://rss.mrcodex.com/' + encodedUrl + '/feed';
-    } else if (/^https:\/\/github\.com\/([\w\-]+)\/([\w\-]+)\/?$/.test(url)) {
+    } else if (/^https:\/\/github\.com\/([\w\-]+)\/([\w\-\.]+)\/?$/.test(url)) {
       if (url.lastIndexOf('/') === url.length - 1) {
         url = url.substring(0, url.length - 1);
       }
