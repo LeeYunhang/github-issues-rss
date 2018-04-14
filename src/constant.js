@@ -14,6 +14,3 @@ exports.SELF_DOMAIN = 'rss.mrcodex.com'
 
 exports.DB_NAME = 'github_rss'
 exports.TABLE_NAME = 'rss_backup'
-
-
-exports.LOG_DIR = './logs'

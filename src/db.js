@@ -1,15 +1,22 @@
 
 const mysql = require('mysql')
+const { env } = require('process')
 
 const { DB_NAME, TABLE_NAME } = require('./constant')
+const {
+    MYSQL_HOST, MYSQL_PORT,
+    MYSQL_SCHEMA, MYSQL_USERNAME, 
+    MYSQL_PASSWORD
+} = env
+
 const logger = require('./logger')
 
 const pool = mysql.createPool({
   connectionLimit: 20,
-  host: '127.0.0.1', 
-  user: process.env['MYSQL_USERNAME'],
-  password: process.env['MYSQL_PASSWORD'],
-  database: DB_NAME  
+  host: MYSQL_HOST, 
+  user: MYSQL_USERNAME,
+  password: MYSQL_PASSWORD,
+  database: MYSQL_SCHEMA  
 })
 
 /* ---------- proxy handler ------------ */

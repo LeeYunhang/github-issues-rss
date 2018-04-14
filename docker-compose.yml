@@ -1,0 +1,29 @@
+
+version: "3"
+services:
+    db:
+        image: mysql:5.7
+        volumes:
+            - ~/.github-issue-rss/mysql:/var/lib/mysql
+        restart: always
+        environment:
+            MYSQL_ROOT_PASSWORD: rootroot
+            MYSQL_DATABASE: rss
+            MYSQL_USER: mrcode
+            MYSQL_PASSWORD: github-issue-rss
+    github-issue-rss:
+        image: mrcode/github-issue-rss:v0.1.0
+        depends_on:
+            - db
+        ports:
+            - "3000:3000"
+        restart: always
+        environment: 
+            MYSQL_PORT: 3306
+            MYSQL_HOST: db
+            MYSQL_SCHEMA: rss 
+            MYSQL_USERNAME: mrcode
+            MYSQL_PASSWORD: github-issue-rss
+            LOG_FILE: /var/log/github-issue-rss/
+        volumes:
+            - ~/.github-issue-rss/log/:/var/log/github-issue-rss/
