@@ -17,19 +17,9 @@ Converting issues on github to rss, but due to the number of requests for the gi
 
 `git clone https://github.com/mrcodehang/github-issues-rss.git`
 
-**Install**
+**Start with docker-compose**
 
-`yarn install`
-
-**Set the environment variable**
-
-You can find the corresponding environment variable in src / constant.js
-
-**Run**
-
-development: `npm run dev`
-
-production: `npm start`
+Use `docker-compose up` in project directory after download docker and docker-compose.
 
 ## Contribution
 
